@@ -99,12 +99,12 @@ st.sidebar.title("⚙ Dashboard Settings")
 
 csv_path = st.sidebar.text_input(
     "Predictions Path",
-    value="../outputs/predictions/churn_predictions.csv"
+    value="./churn_predictions.csv"
 )
 
 model_path = st.sidebar.text_input(
     "Model Path",
-    value="../models/churn_model.joblib"
+    value="./churn_model.joblib"
 )
 
 df = load_data(csv_path)
@@ -192,98 +192,98 @@ with tab1:
 # =========================================================
 # TAB 2 - GEOGRAPHY (Senegal regions)
 # =========================================================
-with tab2:
-    st.subheader("Churn risk by Senegal region")
+# with tab2:
+#     st.subheader("Churn risk by Senegal region")
 
-    # Find a regions GeoJSON next to the project's datasets folder.
-    geojson_path = None
-    for candidate in (
-        "../datasets/telecom_churn/senegal_regions.geojson",
-        "datasets/telecom_churn/senegal_regions.geojson",
-        "/opt/airflow/project/datasets/telecom_churn/senegal_regions.geojson",
-    ):
-        if os.path.exists(candidate):
-            geojson_path = candidate
-            break
+#     # Find a regions GeoJSON next to the project's datasets folder.
+#     geojson_path = None
+#     for candidate in (
+#         "../datasets/telecom_churn/senegal_regions.geojson",
+#         "datasets/telecom_churn/senegal_regions.geojson",
+#         "/opt/airflow/project/datasets/telecom_churn/senegal_regions.geojson",
+#     ):
+#         if os.path.exists(candidate):
+#             geojson_path = candidate
+#             break
 
-    if "region" in df.columns:
-        agg = (
-            df.groupby("region", as_index=False)
-              .agg(
-                  customers=("churn_probability", "size"),
-                  avg_churn_prob=("churn_probability", "mean"),
-                  predicted_churn=("churn_prediction", "sum"),
-              )
-        )
-        agg["region_norm"] = agg["region"].astype(str).str.strip().str.upper()
+#     if "region" in df.columns:
+#         agg = (
+#             df.groupby("region", as_index=False)
+#               .agg(
+#                   customers=("churn_probability", "size"),
+#                   avg_churn_prob=("churn_probability", "mean"),
+#                   predicted_churn=("churn_prediction", "sum"),
+#               )
+#         )
+#         agg["region_norm"] = agg["region"].astype(str).str.strip().str.upper()
 
-        c1, c2 = st.columns([2, 1])
+#         c1, c2 = st.columns([2, 1])
 
-        with c1:
-            if geojson_path:
-                import json
-                with open(geojson_path, "r", encoding="utf-8") as f:
-                    geojson = json.load(f)
-                # Senegal GeoJSONs use NAME_1 (or "name") for the region label.
-                key = "properties.NAME_1"
-                if geojson.get("features"):
-                    props = geojson["features"][0].get("properties", {})
-                    if "NAME_1" not in props:
-                        for cand in ("name", "NAME_2", "NOMREG"):
-                            if cand in props:
-                                key = f"properties.{cand}"
-                                break
-                fig_map = px.choropleth_mapbox(
-                    agg,
-                    geojson=geojson,
-                    locations="region_norm",
-                    featureidkey=key,
-                    color="avg_churn_prob",
-                    color_continuous_scale="Reds",
-                    range_color=(0, max(0.01, agg["avg_churn_prob"].max())),
-                    mapbox_style="carto-positron",
-                    zoom=5.5,
-                    center={"lat": 14.5, "lon": -14.5},
-                    opacity=0.7,
-                    hover_data={
-                        "region_norm": True,
-                        "avg_churn_prob": ":.2%",
-                        "customers": ":,",
-                        "predicted_churn": ":,",
-                    },
-                    title="Average churn probability by region",
-                )
-                fig_map.update_layout(height=520, margin={"l": 0, "r": 0, "t": 40, "b": 0})
-                st.plotly_chart(fig_map, width='stretch')
-            else:
-                st.info(
-                    "Region GeoJSON not found — falling back to a bar chart. "
-                    "Place `senegal_regions.geojson` in `datasets/telecom_churn/`."
-                )
-                fig_bar = px.bar(
-                    agg.sort_values("avg_churn_prob", ascending=False),
-                    x="region_norm", y="avg_churn_prob", color="avg_churn_prob",
-                    color_continuous_scale="Reds",
-                    title="Average churn probability by region",
-                )
-                st.plotly_chart(fig_bar, width='stretch')
+#         with c1:
+#             if geojson_path:
+#                 import json
+#                 with open(geojson_path, "r", encoding="utf-8") as f:
+#                     geojson = json.load(f)
+#                 # Senegal GeoJSONs use NAME_1 (or "name") for the region label.
+#                 key = "properties.NAME_1"
+#                 if geojson.get("features"):
+#                     props = geojson["features"][0].get("properties", {})
+#                     if "NAME_1" not in props:
+#                         for cand in ("name", "NAME_2", "NOMREG"):
+#                             if cand in props:
+#                                 key = f"properties.{cand}"
+#                                 break
+#                 fig_map = px.choropleth_mapbox(
+#                     agg,
+#                     geojson=geojson,
+#                     locations="region_norm",
+#                     featureidkey=key,
+#                     color="avg_churn_prob",
+#                     color_continuous_scale="Reds",
+#                     range_color=(0, max(0.01, agg["avg_churn_prob"].max())),
+#                     mapbox_style="carto-positron",
+#                     zoom=5.5,
+#                     center={"lat": 14.5, "lon": -14.5},
+#                     opacity=0.7,
+#                     hover_data={
+#                         "region_norm": True,
+#                         "avg_churn_prob": ":.2%",
+#                         "customers": ":,",
+#                         "predicted_churn": ":,",
+#                     },
+#                     title="Average churn probability by region",
+#                 )
+#                 fig_map.update_layout(height=520, margin={"l": 0, "r": 0, "t": 40, "b": 0})
+#                 st.plotly_chart(fig_map, width='stretch')
+#             else:
+#                 st.info(
+#                     "Region GeoJSON not found — falling back to a bar chart. "
+#                     "Place `senegal_regions.geojson` in `datasets/telecom_churn/`."
+#                 )
+#                 fig_bar = px.bar(
+#                     agg.sort_values("avg_churn_prob", ascending=False),
+#                     x="region_norm", y="avg_churn_prob", color="avg_churn_prob",
+#                     color_continuous_scale="Reds",
+#                     title="Average churn probability by region",
+#                 )
+#                 st.plotly_chart(fig_bar, width='stretch')
 
-        with c2:
-            st.markdown("##### Top regions by predicted churn")
-            top = agg.sort_values("predicted_churn", ascending=False).head(10)
-            top["avg_churn_prob"] = top["avg_churn_prob"].map(lambda x: f"{x:.1%}")
-            st.dataframe(
-                top[["region_norm", "customers", "predicted_churn", "avg_churn_prob"]]
-                .rename(columns={
-                    "region_norm": "Region",
-                    "customers": "Customers",
-                    "predicted_churn": "Pred. Churn",
-                    "avg_churn_prob": "Avg P(churn)",
-                }),
-                hide_index=True,
-            )
-    else:
-        st.warning("`region` column missing in predictions — geography tab disabled.")
+#         with c2:
+#             st.markdown("##### Top regions by predicted churn")
+#             top = agg.sort_values("predicted_churn", ascending=False).head(10)
+#             top["avg_churn_prob"] = top["avg_churn_prob"].map(lambda x: f"{x:.1%}")
+#             st.dataframe(
+#                 top[["region_norm", "customers", "predicted_churn", "avg_churn_prob"]]
+#                 .rename(columns={
+#                     "region_norm": "Region",
+#                     "customers": "Customers",
+#                     "predicted_churn": "Pred. Churn",
+#                     "avg_churn_prob": "Avg P(churn)",
+#                 }),
+#                 hide_index=True,
+#             )
+#     else:
+#         st.warning("`region` column missing in predictions — geography tab disabled.")
 
 
 # =========================================================
