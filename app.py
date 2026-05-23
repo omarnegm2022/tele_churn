@@ -351,8 +351,8 @@ with tab3:
             "data_volume": [data_volume]
         })
 
-        try:
-            probability = model.predict_proba(input_df)[:, 1][0]
+        # try:
+        probability = model.predict_proba(input_df)[:, 1][0]
         # except:
         #     probability = 0.65
 
