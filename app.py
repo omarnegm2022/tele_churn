@@ -216,7 +216,7 @@ with tab2:
                   predicted_churn=("churn_prediction", "sum"),
               )
         )
-        agg["region_norm"] = agg["region"].astype(str).str.strip().str.upper()
+        agg["region_norm"] = agg["region"].astype(str).str.strip().str.title()
 
         c1, c2 = st.columns([2, 1])
 
