@@ -201,6 +201,7 @@ with tab2:
         "../datasets/telecom_churn/senegal_regions.geojson",
         "datasets/telecom_churn/senegal_regions.geojson",
         "/opt/airflow/project/datasets/telecom_churn/senegal_regions.geojson",
+        "./senegal_regions.geojson"
     ):
         if os.path.exists(candidate):
             geojson_path = candidate
