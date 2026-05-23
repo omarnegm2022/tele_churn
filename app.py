@@ -245,7 +245,7 @@ with tab2:
                     mapbox_style="carto-positron",
                     zoom=5.5,
                     center={"lat": 14.5, "lon": -14.5},
-                    opacity=0.7,
+                    opacity=1,
                     hover_data={
                         "region_norm": True,
                         "avg_churn_prob": ":.2%",
