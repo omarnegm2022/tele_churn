@@ -97,18 +97,65 @@ def load_model(path):
 # =========================================================
 st.sidebar.title("⚙ Dashboard Settings")
 
-csv_path = st.sidebar.text_input(
-    "Predictions Path",
-    value="./churn_predictions.csv"
+# Resolve repo root regardless of where the app was launched from.
+# On Streamlit Cloud the cwd is /mount/src/<repo> and __file__ is at
+# /mount/src/<repo>/dashboards/churn_dashboard_app.py. Locally, the cwd
+# could be either the repo root or dashboards/.
+_DASH_ROOT = os.path.dirname(os.path.abspath(__file__))
+_REPO_ROOT = os.path.dirname(_DASH_ROOT)
+
+
+def _first_existing(*candidates: str) -> str:
+    """Return the first existing path; falls back to the last candidate."""
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return candidates[-1]
+
+
+_default_csv = _first_existing(
+    # Locally — the freshly-predicted file (gitignored, may not exist on Cloud)
+    os.path.join(_REPO_ROOT, "outputs", "predictions", "churn_predictions.csv"),
+    # Canonical baseline committed to the repo (always exists on Cloud)
+    os.path.join(_REPO_ROOT, "outputs", "predictions", "churn_predictions_notebook.csv"),
+)
+_default_model = _first_existing(
+    os.path.join(_REPO_ROOT, "models", "churn_model.joblib"),
+    os.path.join(_REPO_ROOT, "dashboards", "models", "churn_model.joblib"),
 )
 
-model_path = st.sidebar.text_input(
-    "Model Path",
-    value="./churn_model.joblib"
-)
+csv_path = st.sidebar.text_input("Predictions Path", value="./churn_predictions.csv")
+model_path = st.sidebar.text_input("Model Path", value="./churn_model.joblib")
 
-df = load_data(csv_path)
-model, metadata = load_model(model_path)
+# Defensive loaders — Streamlit Cloud shows a redacted "Oh no" page when an
+# uncaught exception fires during module-load. We surface the real reason here.
+try:
+    df = load_data(csv_path)
+except FileNotFoundError as exc:
+    st.error(
+        f"Predictions CSV not found at `{csv_path}`.\n\n"
+        f"Either commit it to the repo, or override the path in the sidebar."
+    )
+    st.code(str(exc))
+    st.stop()
+except Exception as exc:
+    st.error(f"Failed to read predictions CSV: {exc}")
+    st.stop()
+
+try:
+    model, metadata = load_model(model_path)
+except FileNotFoundError as exc:
+    st.error(
+        f"Model joblib not found at `{model_path}`.\n\n"
+        f"Either commit `models/churn_model.joblib` to the repo "
+        f"(small enough at ~5 MB), or override the path in the sidebar."
+    )
+    st.code(str(exc))
+    st.stop()
+except Exception as exc:
+    st.error(f"Failed to load model joblib: {exc}")
+    st.code(str(exc))
+    st.stop()
 
 threshold = st.sidebar.slider(
     "Classification Threshold",
@@ -197,15 +244,14 @@ with tab2:
 
     # Find a regions GeoJSON next to the project's datasets folder.
     geojson_path = None
-    # for candidate in (
-    #     "../datasets/telecom_churn/senegal_regions.geojson",
-    #     "datasets/telecom_churn/senegal_regions.geojson",
-    #     "/opt/airflow/project/datasets/telecom_churn/senegal_regions.geojson",
-    #     "./senegal_regions.geojson"
-    # ):
-    #     if os.path.exists(candidate):
-    #         geojson_path = candidate
-    #         break
+    for candidate in (
+        "../datasets/telecom_churn/senegal_regions.geojson",
+        "datasets/telecom_churn/senegal_regions.geojson",
+        "/opt/airflow/project/datasets/telecom_churn/senegal_regions.geojson",
+    ):
+        if os.path.exists(candidate):
+            geojson_path = candidate
+            break
 
     if "region" in df.columns:
         agg = (
@@ -216,7 +262,7 @@ with tab2:
                   predicted_churn=("churn_prediction", "sum"),
               )
         )
-        agg["region_norm"] = agg["region"].astype(str).str.strip().str.title()
+        agg["region_norm"] = agg["region"].astype(str).str.strip().str.upper()
 
         c1, c2 = st.columns([2, 1])
 
@@ -245,7 +291,7 @@ with tab2:
                     mapbox_style="carto-positron",
                     zoom=5.5,
                     center={"lat": 14.5, "lon": -14.5},
-                    opacity=1,
+                    opacity=0.7,
                     hover_data={
                         "region_norm": True,
                         "avg_churn_prob": ":.2%",
@@ -257,10 +303,10 @@ with tab2:
                 fig_map.update_layout(height=520, margin={"l": 0, "r": 0, "t": 40, "b": 0})
                 st.plotly_chart(fig_map, width='stretch')
             else:
-                # st.info(
-                #     "Region GeoJSON not found — falling back to a bar chart. "
-                #     "Place `senegal_regions.geojson` in `datasets/telecom_churn/`."
-                # )
+                st.info(
+                    "Region GeoJSON not found — falling back to a bar chart. "
+                    "Place `senegal_regions.geojson` in `datasets/telecom_churn/`."
+                )
                 fig_bar = px.bar(
                     agg.sort_values("avg_churn_prob", ascending=False),
                     x="region_norm", y="avg_churn_prob", color="avg_churn_prob",
