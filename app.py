@@ -124,8 +124,8 @@ _default_model = _first_existing(
     os.path.join(_REPO_ROOT, "dashboards", "models", "churn_model.joblib"),
 )
 
-csv_path = st.sidebar.text_input("Predictions Path", value=_default_csv)
-model_path = st.sidebar.text_input("Model Path", value=_default_model)
+csv_path = st.sidebar.text_input("Predictions Path", value="./churn_predictions.csv")
+model_path = st.sidebar.text_input("Model Path", value="./churn_model.joblib")
 
 # Defensive loaders — Streamlit Cloud shows a redacted "Oh no" page when an
 # uncaught exception fires during module-load. We surface the real reason here.
@@ -353,8 +353,8 @@ with tab3:
 
         try:
             probability = model.predict_proba(input_df)[:, 1][0]
-        except:
-            probability = 0.65
+        # except:
+        #     probability = 0.65
 
         risk = classify_risk(probability)
 
