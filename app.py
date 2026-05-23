@@ -409,7 +409,7 @@ with tab3:
             #     df = df[expected_features]
 
             # 4. التوقع الحقيقي المباشر
-            probability = float(pipeline.predict_proba(df)[0][1])
+            probability = float(model.predict_proba(df)[0][1])
             
             st.metric(label="Churn Probability", value=f"{probability:.2%}")    
         # except:
