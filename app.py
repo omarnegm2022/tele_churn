@@ -340,17 +340,34 @@ with tab3:
         regularity = st.number_input("Regularity", 0.0, 31.0, 15.0)
         frequency = st.number_input("Frequency", 0.0, 100.0, 10.0)
         data_volume = st.number_input("Data Volume", 0.0, 100000.0, 1000.0)
+        # 
+        montant = st.number_input("Montant (Recharge)", min_value=0.0, value=100.0, step=100.0)
+        arpu_segment = st.number_input("ARPU Segment", min_value=0.0, value=30.0, step=100.0)
+        freq_top_pack = st.number_input("Freq Top Pack", min_value=0.0, value=0.0, step=1.0)
+        on_net = st.number_input("On Net", min_value=0.0, value=0.0, step=10.0)
+        region_coverage_index = st.number_input("Region Coverage Index", min_value=0.0, max_value=1.0, value=0.45, step=0.05)
+        arr_network_quality_score = st.number_input("Arrondissement Network Quality Score", min_value=0.0, max_value=1.0, value=0.85, step=0.05)
+        region_avg_range = st.number_input("Region Avg Range", min_value=0.0, value=1200.0, step=100.0)
 
         submit = st.form_submit_button("Predict")
 
     if submit:
-        input_df = pd.DataFrame({
-            "revenue": [revenue],
-            "regularity": [regularity],
-            "frequence": [frequency],
-            "data_volume": [data_volume]
-        })
-
+        # input_df = pd.DataFrame({
+        #     "revenue": [revenue],
+        #     "regularity": [regularity],
+        #     "frequence": [frequency],
+        #     "data_volume": [data_volume]
+        # })
+        input_dict = {
+                "montant": float(montant), "frequence_rech": float(frequence_rech), "revenue": float(revenue),
+                "arpu_segment": float(arpu_segment), "frequence": float(frequence), "data_volume": float(data_volume),
+                "on_net": float(on_net), "orange": float(orange), "tigo": float(tigo), "regularity": float(regularity),
+                "freq_top_pack": float(freq_top_pack), "region_tower_count": float(region_tower_count),
+                "region_avg_range": float(region_avg_range), "region_avg_samples": float(region_avg_samples),
+                "region_coverage_index": float(region_coverage_index), "region_network_quality_score": float(region_network_quality_score),
+                "arr_network_quality_score": float(arr_network_quality_score)
+            }
+            input_df = pd.DataFrame([input_dict])
         # try:
         probability = model.predict_proba(input_df)[:][0]
         # except:
