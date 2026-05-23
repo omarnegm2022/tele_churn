@@ -402,11 +402,11 @@ with tab3:
             df['top_pack'] = 'NO_PACK'
             df['region'] = 'UNKNOWN'
 
-            if expected_features:
-                for col in expected_features:
-                    if col not in df.columns:
-                        df[col] = 0.0
-                df = df[expected_features]
+            # if expected_features:
+            #     for col in expected_features:
+            #         if col not in df.columns:
+            #             df[col] = 0.0
+            #     df = df[expected_features]
 
             # 4. التوقع الحقيقي المباشر
             probability = float(pipeline.predict_proba(df)[0][1])
