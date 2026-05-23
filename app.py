@@ -367,7 +367,7 @@ with tab3:
                 "region_coverage_index": float(region_coverage_index), "region_network_quality_score": float(region_network_quality_score),
                 "arr_network_quality_score": float(arr_network_quality_score)
             }
-            input_df = pd.DataFrame([input_dict])
+        input_df = pd.DataFrame([input_dict])
         # try:
         probability = model.predict_proba(input_df)[:][0]
         # except:
