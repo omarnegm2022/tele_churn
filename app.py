@@ -216,7 +216,7 @@ with tab2:
                   predicted_churn=("churn_prediction", "sum"),
               )
         )
-        # agg["region_norm"] = agg["region"].astype(str).str.strip().str
+        agg["region_norm"] = agg["region"].astype(str).str.strip().str
 
         c1, c2 = st.columns([2, 1])
 
@@ -237,7 +237,7 @@ with tab2:
                 fig_map = px.choropleth_mapbox(
                     agg,
                     geojson=geojson,
-                    locations="region",
+                    locations="region_norm",
                     featureidkey=key,
                     color="avg_churn_prob",
                     color_continuous_scale="Reds",
