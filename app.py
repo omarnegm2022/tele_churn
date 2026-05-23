@@ -352,7 +352,7 @@ with tab3:
         })
 
         # try:
-        probability = model.predict_proba(input_df)[:, 1][0]
+        probability = model.predict_proba(input_df)[:][0]
         # except:
         #     probability = 0.65
 
