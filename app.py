@@ -197,15 +197,15 @@ with tab2:
 
     # Find a regions GeoJSON next to the project's datasets folder.
     geojson_path = None
-    for candidate in (
-        "../datasets/telecom_churn/senegal_regions.geojson",
-        "datasets/telecom_churn/senegal_regions.geojson",
-        "/opt/airflow/project/datasets/telecom_churn/senegal_regions.geojson",
-        "./senegal_regions.geojson"
-    ):
-        if os.path.exists(candidate):
-            geojson_path = candidate
-            break
+    # for candidate in (
+    #     "../datasets/telecom_churn/senegal_regions.geojson",
+    #     "datasets/telecom_churn/senegal_regions.geojson",
+    #     "/opt/airflow/project/datasets/telecom_churn/senegal_regions.geojson",
+    #     "./senegal_regions.geojson"
+    # ):
+    #     if os.path.exists(candidate):
+    #         geojson_path = candidate
+    #         break
 
     if "region" in df.columns:
         agg = (
@@ -257,10 +257,10 @@ with tab2:
                 fig_map.update_layout(height=520, margin={"l": 0, "r": 0, "t": 40, "b": 0})
                 st.plotly_chart(fig_map, width='stretch')
             else:
-                st.info(
-                    "Region GeoJSON not found — falling back to a bar chart. "
-                    "Place `senegal_regions.geojson` in `datasets/telecom_churn/`."
-                )
+                # st.info(
+                #     "Region GeoJSON not found — falling back to a bar chart. "
+                #     "Place `senegal_regions.geojson` in `datasets/telecom_churn/`."
+                # )
                 fig_bar = px.bar(
                     agg.sort_values("avg_churn_prob", ascending=False),
                     x="region_norm", y="avg_churn_prob", color="avg_churn_prob",
