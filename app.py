@@ -414,6 +414,8 @@ with tab3:
             st.metric(label="Churn Probability", value=f"{probability:.2%}")    
         # except:
         #     probability = 0.65
+        except Exception as e:
+            st.error(f"حدث خطأ أثناء الحساب الرياضي: {str(e)}")
 #NOTE: MFarouk code done!
         risk = classify_risk(probability)
         st.info(f"Risk Level: {risk}")
