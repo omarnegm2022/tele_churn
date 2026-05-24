@@ -34,26 +34,12 @@ st.set_page_config(
 # =========================================================
 # STYLING
 # =========================================================
-st.markdown("""
-<style>
-[data-testid="stAppViewContainer"] {
-    background: #2E5266;
-    color: white;
-}
-.stApp {
+st.markdown"""
+    <style>
+    .stApp {
         background-color: #2e5266;
     }
-.kpi-card {
-    background: #2E5266;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #2b2b40;
-}
-.kpi-value {
-    font-size: 32px;
-    font-weight: bold;
-}
-</style>
+    </style>
 """, unsafe_allow_html=True)
 
 # =========================================================
