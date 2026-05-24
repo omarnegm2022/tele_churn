@@ -341,9 +341,9 @@ with tab3:
         st.header("💼 Business Features")
         montant = st.number_input("Montant (Recharge)", min_value=0.0, value=100.0, step=100.0)
         frequence_rech = st.number_input("Frequence Rech", min_value=0.0, value=1.0, step=1.0)
-        revenue = st.number_input("Revenue", min_value=0.0, value=50.0, step=100.0)
-        arpu_segment = st.number_input("ARPU Segment", min_value=0.0, value=30.0, step=100.0)
-        frequence = st.number_input("Frequence", min_value=0.0, value=1.0, step=1.0)
+        # revenue = st.number_input("Revenue", min_value=0.0, value=50.0, step=100.0)
+        # arpu_segment = st.number_input("ARPU Segment", min_value=0.0, value=30.0, step=100.0)
+        # frequence = st.number_input("Frequence", min_value=0.0, value=1.0, step=1.0)
         data_volume = st.number_input("Data Volume", min_value=0.0, value=0.0, step=500.0)
         on_net = st.number_input("On Net", min_value=0.0, value=0.0, step=10.0)
         orange = st.number_input("Orange", min_value=0.0, value=0.0, step=10.0)
@@ -355,12 +355,12 @@ with tab3:
     with col2:
         st.header("🌐 Technical & Regional Features")
         region_tower_count = st.number_input("Region Tower Count", min_value=0.0, value=5.0, step=1.0)
-        region_avg_range = st.number_input("Region Avg Range", min_value=0.0, value=1200.0, step=100.0)
+        # region_avg_range = st.number_input("Region Avg Range", min_value=0.0, value=1200.0, step=100.0)
         region_avg_samples = st.number_input("Region Avg Samples", min_value=0.0, value=350.0, step=50.0)
-        region_coverage_index = st.number_input("Region Coverage Index", min_value=0.0, max_value=1.0, value=0.45, step=0.05)
+        # region_coverage_index = st.number_input("Region Coverage Index", min_value=0.0, max_value=1.0, value=0.45, step=0.05)
         
-        region_network_quality_score = st.number_input("Region Network Quality Score", min_value=0.0, max_value=1.0, value=0.10, step=0.05)
-        arr_network_quality_score = st.number_input("Arrondissement Network Quality Score", min_value=0.0, max_value=1.0, value=0.85, step=0.05)
+        # region_network_quality_score = st.number_input("Region Network Quality Score", min_value=0.0, max_value=1.0, value=0.10, step=0.05)
+        # arr_network_quality_score = st.number_input("Arrondissement Network Quality Score", min_value=0.0, max_value=1.0, value=0.85, step=0.05)
 
     st.markdown("---")
 
@@ -368,13 +368,24 @@ with tab3:
         try:
             # 2. تحويل البيانات المدخلة مباشرة إلى DataFrame
             input_dict = {
-                "montant": float(montant), "frequence_rech": float(frequence_rech), "revenue": float(revenue),
-                "arpu_segment": float(arpu_segment), "frequence": float(frequence), "data_volume": float(data_volume),
-                "on_net": float(on_net), "orange": float(orange), "tigo": float(tigo), "regularity": float(regularity),
-                "freq_top_pack": float(freq_top_pack), "region_tower_count": float(region_tower_count),
-                "region_avg_range": float(region_avg_range), "region_avg_samples": float(region_avg_samples),
-                "region_coverage_index": float(region_coverage_index), "region_network_quality_score": float(region_network_quality_score),
-                "arr_network_quality_score": float(arr_network_quality_score)
+                
+                "montant": float(montant), #remain it at 100.0, as either direction of change it increases the risk.
+                "frequence_rech": float(frequence_rech), 
+                #NO effect
+                #"revenue": float(revenue),            "arpu_segment": float(arpu_segment), "frequence": float(frequence), 
+                "data_volume": float(data_volume),#Increase the risk
+                "on_net": float(on_net), #Decreases the risk
+                "orange": float(orange), # >=120.0  increases the risk by 0.68 once.
+                "tigo": float(tigo), # above 0.0, increases the risk by 0.68 once.
+                "regularity": float(regularity),
+                "freq_top_pack": float(freq_top_pack), # above 1.0, increases the risk by 0.68 once.
+                
+                "region_tower_count": float(region_tower_count),#TODO: inspect its strange effect.
+                #NO effect
+                # "region_avg_range": float(region_avg_range), "region_coverage_index": float(region_coverage_index), 
+                #"region_network_quality_score": float(region_network_quality_score), "arr_network_quality_score": float(arr_network_quality_score),
+                "region_avg_samples": float(region_avg_samples)#At 0.0, increases the risk by 0.68
+                
             }
             df = pd.DataFrame([input_dict])
             
@@ -390,6 +401,7 @@ with tab3:
             df['avg_recharge_amount'] = np.where(df['frequence_rech'] <= 0, 0.0, df['montant'] / df['frequence_rech'])
             df['log_avg_recharge_amount'] = np.log1p(df['avg_recharge_amount'])
             
+            #NOTE: revenue has NO effect on the prediction.
             df['avg_revenue_per_tx'] = np.where(df['frequence'] <= 0, 0.0, df['revenue'] / df['frequence'])
             df['log_avg_revenue_per_tx'] = np.log1p(df['avg_revenue_per_tx'])
             
