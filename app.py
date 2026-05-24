@@ -40,6 +40,9 @@ st.markdown("""
     background: #2E5266;
     color: white;
 }
+.stApp {
+        background-color: #2e5266;
+    }
 .kpi-card {
     background: #2E5266;
     padding: 20px;
