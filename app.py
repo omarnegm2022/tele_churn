@@ -424,13 +424,19 @@ with tab3:
             probability = float(model.predict_proba(df)[0][1])
             
             st.metric(label="Churn Probability", value=f"{probability:.2%}")    
+             if probability >= 0.25:
+                st.error("⚠️ **Prediction:** High Risk")
+                st.warning("💡 تحذير: العميل معرض للمغادرة! نقترح تقديم عرض مخصص لحفظ العميل.")
+            else:
+                st.success("✅ **Prediction:** Low Risk")
+                st.info("💡 العميل مستقر حالياً، لا توجد خطورة.")
         # except:
         #     probability = 0.65
         except Exception as e:
             st.error(f"حدث خطأ أثناء الحساب الرياضي: {str(e)}")
 #NOTE: MFarouk code done!
-        risk = classify_risk(probability)
-        st.info(f"Risk Level: {risk}")
+        # risk = classify_risk(probability)
+        # st.info(f"Risk Level: {risk}")
 
 # =========================================================
 # TAB 4 - MODEL
