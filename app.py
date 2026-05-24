@@ -372,7 +372,8 @@ with tab3:
                 "montant": float(montant), #remain it at 100.0, as either direction of change it increases the risk.
                 "frequence_rech": float(frequence_rech), 
                 #NO effect
-                "revenue": float(revenue),            "arpu_segment": float(arpu_segment), "frequence": float(frequence), 
+                "revenue": float(50.0),            "arpu_segment": float(30.0), "frequence": float(1.0), 
+                
                 "data_volume": float(data_volume),#Increase the risk
                 "on_net": float(on_net), #Decreases the risk
                 "orange": float(orange), # >=120.0  increases the risk by 0.68 once.
@@ -383,8 +384,8 @@ with tab3:
                 "region_tower_count": float(region_tower_count),#TODO: inspect its strange effect.
                 
                 #NO effect
-                "region_avg_range": float(region_avg_range), "region_coverage_index": float(region_coverage_index), 
-                "region_network_quality_score": float(region_network_quality_score), "arr_network_quality_score": float(arr_network_quality_score),
+                "region_avg_range": float(1200.0), "region_coverage_index": float(0.45), 
+                "region_network_quality_score": float(0.10), "arr_network_quality_score": float(0.85),
                
                 "region_avg_samples": float(region_avg_samples)#At 0.0, increases the risk by 0.68
                 
