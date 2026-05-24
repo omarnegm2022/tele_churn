@@ -424,7 +424,7 @@ with tab3:
             probability = float(model.predict_proba(df)[0][1])
             
             st.metric(label="Churn Probability", value=f"{probability:.2%}")    
-             if probability >= 0.25:
+            if probability >= 0.25:
                 st.error("⚠️ **Prediction:** High Risk")
                 st.warning("💡 تحذير: العميل معرض للمغادرة! نقترح تقديم عرض مخصص لحفظ العميل.")
             else:
