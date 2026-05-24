@@ -372,7 +372,7 @@ with tab3:
                 "montant": float(montant), #remain it at 100.0, as either direction of change it increases the risk.
                 "frequence_rech": float(frequence_rech), 
                 #NO effect
-                #"revenue": float(revenue),            "arpu_segment": float(arpu_segment), "frequence": float(frequence), 
+                "revenue": float(revenue),            "arpu_segment": float(arpu_segment), "frequence": float(frequence), 
                 "data_volume": float(data_volume),#Increase the risk
                 "on_net": float(on_net), #Decreases the risk
                 "orange": float(orange), # >=120.0  increases the risk by 0.68 once.
@@ -381,9 +381,11 @@ with tab3:
                 "freq_top_pack": float(freq_top_pack), # above 1.0, increases the risk by 0.68 once.
                 
                 "region_tower_count": float(region_tower_count),#TODO: inspect its strange effect.
+                
                 #NO effect
-                # "region_avg_range": float(region_avg_range), "region_coverage_index": float(region_coverage_index), 
-                #"region_network_quality_score": float(region_network_quality_score), "arr_network_quality_score": float(arr_network_quality_score),
+                "region_avg_range": float(region_avg_range), "region_coverage_index": float(region_coverage_index), 
+                "region_network_quality_score": float(region_network_quality_score), "arr_network_quality_score": float(arr_network_quality_score),
+               
                 "region_avg_samples": float(region_avg_samples)#At 0.0, increases the risk by 0.68
                 
             }
@@ -424,19 +426,19 @@ with tab3:
             probability = float(model.predict_proba(df)[0][1])
             
             st.metric(label="Churn Probability", value=f"{probability:.2%}")    
-            if probability >= 0.25:
-                st.error("⚠️ **Prediction:** High Risk")
-                st.warning("💡 تحذير: العميل معرض للمغادرة! نقترح تقديم عرض مخصص لحفظ العميل.")
-            else:
-                st.success("✅ **Prediction:** Low Risk")
-                st.info("💡 العميل مستقر حالياً، لا توجد خطورة.")
+            # if probability >= 0.25:
+            #     st.error("⚠️ **Prediction:** High Risk")
+            #     st.warning("💡 تحذير: العميل معرض للمغادرة! نقترح تقديم عرض مخصص لحفظ العميل.")
+            # else:
+            #     st.success("✅ **Prediction:** Low Risk")
+            #     st.info("💡 العميل مستقر حالياً، لا توجد خطورة.")
         # except:
         #     probability = 0.65
         except Exception as e:
             st.error(f"حدث خطأ أثناء الحساب الرياضي: {str(e)}")
 #NOTE: MFarouk code done!
-        # risk = classify_risk(probability)
-        # st.info(f"Risk Level: {risk}")
+        risk = classify_risk(probability)
+        st.info(f"Risk Level: {risk}")
 
 # =========================================================
 # TAB 4 - MODEL
